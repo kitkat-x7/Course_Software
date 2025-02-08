@@ -13,36 +13,31 @@ mongoose.connect("mongodb+srv://kaustavnag13:IAMKaustav13@cluster0.nn3tf.mongodb
 
 app.post("/",(req,res)=>{
     res.json({
-        message:"About Us"
+        message:"WE ARE A COURSE SELLING COMPANY"
     })
 });
 
 app.post("/blog",(req,res)=>{
     res.json({
-        message:"Blog"
+        message:"WE ARE A COURSE SELLING COMPANY, founded in 2025"
     })
 });
 
 app.get("/news",(req,res)=>{
     res.json({
-        message:"News"
+        message:"No News Yet"
     })
 });
 
 app.put("/privacy",(req,res)=>{
     res.json({
-        message:"Privacy Policy"
+        message:"Privacy Policy will be updated soon"
     })
 });
 
 app.delete("/publicnotice",(req,res)=>{
     res.json({
-        message:"Public Notice"
+        message:"No Public Notice"
     })
 });
 
-app.post("/blog/blogname",(req,res)=>{
-    res.json({
-        message:"Blog"
-    })
-});

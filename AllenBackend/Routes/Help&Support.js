@@ -25,6 +25,6 @@ app.get("/FAQ",(req,res)=>{
 
 app.get("/contact",(req,res)=>{
     res.json({
-        message:"get Contact",
+        message:"100",
     });
 });

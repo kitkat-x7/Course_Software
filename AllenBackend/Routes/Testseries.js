@@ -20,9 +20,8 @@ router.get("/",async (req,res)=>{
         const test=await Test_SeriesModel.find();
         res.json(test);
     }catch(err){
-        res.status(404).json({ message: "Data Not Found",
-            error:err,
-        });
+        console.error("Error occurred:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 });
 
@@ -30,13 +29,15 @@ router.get("/Testname",async (req,res)=>{
     const {TestId}=req.body;
     try{
         const test=await Test_SeriesModel.findOne({_id:TestId});
+        if(!test){
+            return res.status(404).json({ message: "Course not found"});
+        }
         res.json({
             test,
         });
     }catch(err){
-        res.status(404).json({ message: "Data Not Found",
-            error:err,
-        });
+        console.error("Error occurred:", err);
+        res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 });
 router.use(verifyuser);
@@ -44,12 +45,24 @@ router.use(verifyuser);
 router.post("/purchase",async (req,res)=>{
     const {testId}=req.body;
     try{
+        const test=await Test_SeriesModel.findOne({_id:courseId});
+        if(!test){
+            return res.status(404).json({ message: "Course not found"});
+        }
         await Test_PurchaseModel.create({UserId:req.userId,testId});
         res.json({message:"Course Craeted"});
-    }catch(e){
-        res.json({
-            message:e,
-        })
+    }catch(err){
+        console.error("Error occurred:", err);
+        if (err.name === "CastError") {
+            return res.status(400).json({ message: "Invalid user ID format" });
+        }
+        if (err.name === "ValidationError") {
+            return res.status(400).json({ message: "Validation Error", error: e.message });
+        }else{
+            return res.status(500).json({
+                message: "Internal Server Error"
+            })
+        }
     }
 });
 
