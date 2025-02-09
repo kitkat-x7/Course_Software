@@ -8,10 +8,11 @@ const {Course_PurchaseModel,Test_PurchaseModel}=require("./../Database/Purchase.
 const {CourseModel}=require("../Database/Course.js");
 const jwt=require("jsonwebtoken");
 const mongoose=require("mongoose");
-const { ObjectId } = require('mongodb');
+const cookieParser = require('cookie-parser');
 const { verifyuser }=require("../Middleware/Userverify.js")
 const {JWT_USER_SECRET}=require("../Config/config.js");
 const { Test_SeriesModel } = require('../Database/TestSeries.js');
+app.use(cookieParser());
 
 mongoose.connect("mongodb+srv://kaustavnag13:IAMKaustav13@cluster0.nn3tf.mongodb.net/Course_Storage");
 router.post("/signup",async (req,res)=>{  
@@ -57,8 +58,12 @@ router.post("/signin",async (req,res)=>{
         const isPasswordValid = await bcrypt.compare(password,stored_pass);
         if(isPasswordValid){
             const token=jwt.sign({id:User._id},JWT_USER_SECRET,{expiresIn:"30m"});
-            return res.json({
-                message:token,
+            const time = 30*60*1000;
+            res.cookie("usertoken", token, {
+                maxAge: time,
+            });
+            res.status(200).json({
+                message:"User Signed In!",
             });
         }else{
             return res.status(403).json({ message: "Forbidden! Wrong Password!" });
@@ -71,7 +76,7 @@ router.post("/signin",async (req,res)=>{
     }
 });
 
-router.get("/:username", verifyuser, async (req, res) => {
+router.get("/:username",verifyuser,async (req, res) => {
     try {
         const username = req.params.username;
         const user = await UserModel.findById(req.userId);

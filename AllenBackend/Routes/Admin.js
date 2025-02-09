@@ -57,8 +57,12 @@ router.post("/signin",async (req,res)=>{
         const isPasswordValid = await bcrypt.compare(password,stored_pass);
         if(isPasswordValid){
             const token=jwt.sign({id:User._id},JWT_ADMIN_SECRET);
-            return res.json({
-                message:token,
+            const time = 30*60*1000;
+            res.cookie("admintoken",token,{
+                maxAge:time
+            });
+            res.status(200).json({
+                message:"User Signed In!",
             });
         }else{
             return res.status(403).json({ message: "Incorrect Password or Email !!!!" });
