@@ -26,7 +26,7 @@ router.post("/signup",async (req,res)=>{
     }
     const hashpass=await bcrypt.hash(password, 10);
     try{
-        await AdminModel.create({
+        await UserModel.create({
             email,
             password:hashpass,
             firstname,
@@ -76,7 +76,16 @@ router.post("/signin",async (req,res)=>{
     }
 });
 
-router.get("/:username",verifyuser,async (req, res) => {
+router.use(verifyuser);
+
+router.get("/signout",async (req,res)=>{
+    res.clearCookie('usertoken');
+    res.status(200).json({
+        message:"User Logged Out!",
+    });
+});
+
+router.get("/:username",async (req, res) => {
     try {
         const username = req.params.username;
         const user = await UserModel.findById(req.userId);
@@ -108,7 +117,7 @@ router.get("/:username",verifyuser,async (req, res) => {
 
 // rest full APIs
 // put vs patch vs post
-router.put("/edit/:username",verifyuser,async (req,res)=>{
+router.put("/edit/:username",async (req,res)=>{
     const {email,firstname,lastname}=req.body;
     try{
         const status=await UserModel.findOneAndUpdate({
@@ -139,7 +148,7 @@ router.put("/edit/:username",verifyuser,async (req,res)=>{
 // delete user make user specific
 // close the session
 // make two catch 404 if data not found and 500 other server error
-router.delete("/delete/:username",verifyuser,async (req,res)=>{
+router.delete("/delete/:username",async (req,res)=>{
     try{
         const status=await UserModel.findOneAndDelete({
             _id:req.userId
@@ -157,7 +166,7 @@ router.delete("/delete/:username",verifyuser,async (req,res)=>{
     }
 });
 
-router.get("/mycourses",verifyuser,async (req,res)=>{
+router.get("/mycourses",async (req,res)=>{
     try{
         const data=await Course_PurchaseModel.find({UserId:req.userId});
         let Courses=[];
@@ -172,7 +181,7 @@ router.get("/mycourses",verifyuser,async (req,res)=>{
     }
 });
 
-router.get("/mytestseies",verifyuser,async (req,res)=>{
+router.get("/mytestseies",async (req,res)=>{
     try{
         const data=await Test_PurchaseModel.find({UserId:req.userId});
         console.log(data);

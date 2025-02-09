@@ -1,2 +1,2 @@
-app.use("/Course", Course);
-// app.use("/Test", Test);
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());

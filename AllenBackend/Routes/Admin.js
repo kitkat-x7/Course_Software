@@ -74,6 +74,14 @@ router.post("/signin",async (req,res)=>{
 });
 
 router.use(verifyadmin);
+
+router.get("/signout",async (req,res)=>{
+    res.clearCookie('admintoken');
+    res.status(200).json({
+        message:"Admin Logged Out!",
+    });
+});
+
 router.get("/:username",async (req,res)=>{
     try{
         const username = req.params.username;
